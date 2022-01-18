@@ -1,17 +1,21 @@
+//Basic imports:
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+//Custom hooks:
 import useIdle from "./useIdle";
 
+//Components:
 import SlideLink from "./SlideLink";
 import Wrapper from "./Wrapper";
 import Slide from "./Slide";
 
+//Starting component:
 const BlogPostCardSlider = ({ children }) => {
   // console.log("render"); //Note -> when we hit "prev" or "next" and we are in the minimum/maximum value,
   //the component does not get rendered again. That's because the targetSlide state value does not change!
-  // console.log(children);
+  // console.log(children); //Note -> all the children of BlogPostCardSlider component in the tree (array of childrens)
 
-  //State and refs:
+  //Local state and refs:
   const [visibleSlide, setVisibleSlide] = useState(0);
   const [targetSlide, setTargetSlide] = useState(0);
   const wrapperRef = useRef(null);
@@ -27,6 +31,7 @@ const BlogPostCardSlider = ({ children }) => {
   const scrollToTargetSlide = useCallback(() => {
     const targetSlide = targetSlideRef.current; //gets html tag of slide to be scrolled to (Slide component below)
     const wrapper = wrapperRef.current; //gets html tag of wrapper of that slide (Wrapper component below -> Wrapper for Slide component)
+    // console.log("2");
 
     // console.log("targetSlide:");
     // console.log(targetSlide);
@@ -73,10 +78,14 @@ const BlogPostCardSlider = ({ children }) => {
     let { width } = wrapperRef.current.getBoundingClientRect(); //This is always the width of the visible wrapper.
     let { scrollLeft } = wrapperRef.current;
 
-    // console.log("scrollLeft:");
-    // console.log(scrollLeft); //scrollLeft scrolls through all the width of the wrapper, including the non visible parts (which are scrollable)
+    console.log("scrollLeft:");
+    console.log(scrollLeft); //scrollLeft scrolls through all the width of the wrapper, including the non visible parts (which are scrollable)
 
-    setVisibleSlide(Math.round(scrollLeft / width)); //is we are at 51% of the next div, then we will scroll when idle. If not, will remain in the same slide.
+    setVisibleSlide(Math.round(scrollLeft / width)); //if we are at 51% of the next div, then we will scroll when idle. If not, will remain in the same slide when idle.
+
+    // console.log("scrollLeft / width:");
+    // console.log(scrollLeft / width);
+
     touchScroll();
   }, [touchScroll]);
 
@@ -94,7 +103,18 @@ const BlogPostCardSlider = ({ children }) => {
     ---
     For Slide Component:
     1. ref is assigned dynamically depending on the targetSlide. 
+    ---
+    TABINDEX:
+    Default value is -1. 
+    Global attribute tabIndex determine if an HTML element can be focused or not.
+    <0: element can be focused, but not altabed.
+    =0: can be focused and altabed, but the altabing order is defined by the platform (explorer)
+    >1: can be focused and altabed. His order in the altabing secuence is defined by his number. If
+    several HTML elements share the same index, then the relative order follow the order of the document.
+    For a more detailed reference see: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/tabindex
+    Try: PREV Button with tabIdex = "-1" -> as you can see in that case, the element can't be altabed.
   */
+  // console.log("1");
   return (
     <div id="trap" tabIndex="0">
       <button onClick={() => setTargetSlide(moveLeft)}>PREV</button>
